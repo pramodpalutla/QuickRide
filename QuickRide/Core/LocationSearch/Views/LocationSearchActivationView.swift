@@ -15,6 +15,7 @@ struct LocationSearchActivationView: View {
                 .frame(width: 10, height: 10)
                 .padding(.horizontal)
             Text("What's your destination?")
+                .foregroundColor(.black)
                 Spacer()
         }
         .frame(width: UIScreen.main.bounds.width - 64, height: 50)

@@ -12,7 +12,8 @@ import MapKit
 struct QuickRideMapViewRepresentable: UIViewRepresentable {
     
     let mapView = MKMapView()
-    let locationManager = LocationManager()
+    let locationManager = LocationManager.shared
+    @Binding var mapState: MapViewState
     @EnvironmentObject var locationViewModel : LocationSearchViewModel
     
     func makeUIView(context: Context) -> some UIView {
@@ -25,11 +26,28 @@ struct QuickRideMapViewRepresentable: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UIViewType, context: Context) {
-        if let coordinate = locationViewModel.selectedLocationCoordinate {
-            print("DEBUG: Selected coordinate in mapview \(coordinate)")
-            context.coordinator.addAndSelectAnnotation(withCoordinate: coordinate)
-            context.coordinator.configurePolyline(withDestinationCoordinate: coordinate)
+        print("DEBUG: MAP STATE IS \(mapState)")
+        
+        
+        switch mapState {
+        case .noInput:
+            context.coordinator.clearMapViewAndRecenterOnUserLocation()
+        case .searchingForLocation:
+            break
+        case .locationSelected:
+            if let coordinate = locationViewModel.selectedRideLocation?.coordinate {
+                print("DEBUG: Selected coordinate in mapview \(coordinate)")
+                context.coordinator.addAndSelectAnnotation(withCoordinate: coordinate)
+                context.coordinator.configurePolyline(withDestinationCoordinate: coordinate)
+            }
+            break
+        case .polylineAdded:
+            break
         }
+        
+        //        if mapState == .noInput {
+        //            context.coordinator.clearMapViewAndRecenterOnUserLocation()
+        //        }
     }
     
     func makeCoordinator() -> MapCoordinator {
@@ -44,6 +62,7 @@ extension QuickRideMapViewRepresentable {
         // MARK: - Properties
         let parent: QuickRideMapViewRepresentable
         var userLocationCoordinate: CLLocationCoordinate2D?
+        var currentRegion: MKCoordinateRegion?
         
         // MARK: - Lifecycle
         
@@ -60,6 +79,8 @@ extension QuickRideMapViewRepresentable {
                 center: CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude),
                 span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
             )
+            
+            self.currentRegion = region
             parent.mapView.setRegion(region, animated: true)
         }
         
@@ -78,36 +99,27 @@ extension QuickRideMapViewRepresentable {
             anno.coordinate = coordinate
             self.parent.mapView.addAnnotation(anno)
             self.parent.mapView.selectAnnotation(anno, animated: true)
-            parent.mapView.showAnnotations(parent.mapView.annotations, animated: true)
+//            parent.mapView.showAnnotations(parent.mapView.annotations, animated: true)
         }
         
         func configurePolyline(withDestinationCoordinate coordinate: CLLocationCoordinate2D) {
             guard let userlocation = self.userLocationCoordinate else { return }
-            getDestinationRoute(from: userlocation, to: coordinate) { route in
+            self.parent.locationViewModel.getDestinationRoute(from: userlocation, to: coordinate) { route in
                 self.parent.mapView.addOverlay(route.polyline)
-                
+                self.parent.mapState = .polylineAdded
+                let rect = self.parent.mapView.mapRectThatFits(route.polyline.boundingMapRect, edgePadding: .init(top: 64, left: 32, bottom: 500, right: 32))
+                self.parent.mapView.setRegion(MKCoordinateRegion(rect), animated: true)
             }
         }
         
-        func getDestinationRoute (from userLocation: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D, completion: @escaping (MKRoute) -> Void) {
-            let userPlacemark = MKPlacemark( coordinate: userLocation)
-            let destPlacemark = MKPlacemark(coordinate: destination)
-            let request = MKDirections.Request()
-            request.source = MKMapItem(placemark: userPlacemark)
-            request.destination = MKMapItem(placemark: destPlacemark)
-            let directions = MKDirections(request: request)
-            directions.calculate { response, error in
-               
-                    if let error = error {
-                        print("DEBUG: Failed to get directions with error \(error.localizedDescription)")
-                        return
-                    }
-                    guard let route = response?.routes.first else { return }
-                    completion(route)
-                
-            }
-            
-        }
+
         
+        func clearMapViewAndRecenterOnUserLocation () {
+            parent.mapView.removeAnnotations(parent.mapView.annotations)
+            parent.mapView.removeOverlays (parent.mapView.overlays)
+            if let currentRegion = currentRegion {
+                parent.mapView.setRegion (currentRegion, animated: true)
+            }
+        }
     }
 }
