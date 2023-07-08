@@ -8,21 +8,20 @@
 import SwiftUI
 
 struct SavedLocationRowView: View {
-    let imageName: String
-    let title: String
-    let subtitle: String
+    let viewModel: SavedLocationViewModel
+    let user: User
     
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: imageName)
+            Image(systemName: viewModel.imageName)
                 .imageScale(.medium)
                 .font(.title)
                 .foregroundColor(Color(.systemBlue))
             VStack(alignment: .leading, spacing: 4) {
-                Text(title)
+                Text(viewModel.title)
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(Color.theme.primaryTextColor)
-                Text(subtitle)
+                Text(viewModel.subtitle(forUser: user))
                     .font(.system(size: 14))
                     .foregroundColor(.gray)
             }

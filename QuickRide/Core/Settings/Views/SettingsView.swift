@@ -33,6 +33,7 @@ struct SettingsView: View {
                                 .accentColor(Color.theme.primaryTextColor)
                                 .opacity(0.7)
                         }
+                        .padding(.leading, 6)
                         Spacer()
                         Image(systemName: "chevron.right")
                             .imageScale(.small)
@@ -42,8 +43,16 @@ struct SettingsView: View {
                     .padding(8)
                 }
                 Section("Favorites") {
-                    SavedLocationRowView(imageName: "house.circle.fill", title: "Home", subtitle: "Add Home")
-                    SavedLocationRowView(imageName: "archivebox.circle.fill", title: "Work", subtitle: "Add Work")
+                    ForEach(SavedLocationViewModel.allCases) { viewModel in
+                        NavigationLink {
+                            SavedLocationSearchView(config: viewModel)
+                        } label: {
+                            SavedLocationRowView(viewModel: viewModel, user: user)
+                        }
+                        
+                        
+                    }
+                    
                 }
                 
                 Section("Settings") {
