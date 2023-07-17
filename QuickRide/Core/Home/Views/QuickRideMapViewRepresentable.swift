@@ -14,7 +14,8 @@ struct QuickRideMapViewRepresentable: UIViewRepresentable {
     let mapView = MKMapView()
     let locationManager = LocationManager.shared
     @Binding var mapState: MapViewState
-    @EnvironmentObject var locationViewModel : LocationSearchViewModel
+//    @EnvironmentObject var locationViewModel : LocationSearchViewModel
+    @EnvironmentObject var homeViewModel: HomeViewModel
     
     func makeUIView(context: Context) -> some UIView {
         mapView.delegate = context.coordinator
@@ -32,10 +33,12 @@ struct QuickRideMapViewRepresentable: UIViewRepresentable {
         switch mapState {
         case .noInput:
             context.coordinator.clearMapViewAndRecenterOnUserLocation()
+            context.coordinator.addDriversToMap(homeViewModel.drivers)
+            break
         case .searchingForLocation:
             break
         case .locationSelected:
-            if let coordinate = locationViewModel.selectedRideLocation?.coordinate {
+            if let coordinate = homeViewModel.selectedRideLocation?.coordinate {
                 print("DEBUG: Selected coordinate in mapview \(coordinate)")
                 context.coordinator.addAndSelectAnnotation(withCoordinate: coordinate)
                 context.coordinator.configurePolyline(withDestinationCoordinate: coordinate)
@@ -91,6 +94,18 @@ extension QuickRideMapViewRepresentable {
             return polyline
         }
         
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            if let annotation = annotation as? DriverAnnotation {
+                let view = MKAnnotationView(annotation: annotation, reuseIdentifier: "driver")
+                view.image = UIImage(named: "car")
+                let size = CGSize(width: 64, height: 64)
+                view.frame = CGRect(origin: .zero, size: size)
+                return view
+            } else {
+                return nil
+            }
+        }
+        
         // MARK: - Helpers
         
         func addAndSelectAnnotation(withCoordinate coordinate: CLLocationCoordinate2D) {
@@ -104,7 +119,7 @@ extension QuickRideMapViewRepresentable {
         
         func configurePolyline(withDestinationCoordinate coordinate: CLLocationCoordinate2D) {
             guard let userlocation = self.userLocationCoordinate else { return }
-            self.parent.locationViewModel.getDestinationRoute(from: userlocation, to: coordinate) { route in
+            self.parent.homeViewModel.getDestinationRoute(from: userlocation, to: coordinate) { route in
                 self.parent.mapView.addOverlay(route.polyline)
                 self.parent.mapState = .polylineAdded
                 let rect = self.parent.mapView.mapRectThatFits(route.polyline.boundingMapRect, edgePadding: .init(top: 64, left: 32, bottom: 500, right: 32))
@@ -120,6 +135,11 @@ extension QuickRideMapViewRepresentable {
             if let currentRegion = currentRegion {
                 parent.mapView.setRegion (currentRegion, animated: true)
             }
+        }
+        
+        func addDriversToMap(_ drivers: [User]) {
+            let annotations = drivers.map({ DriverAnnotation(driver: $0)})
+            self.parent.mapView.addAnnotations(annotations)
         }
     }
 }

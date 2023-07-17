@@ -3,4 +3,54 @@
    uuid = "6D25E5EF-7BF6-433E-BEB3-909B87FEFFB6"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AB2ACB6A-3FDE-4973-B84E-9AA63FF1483F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "QuickRide/Core/Authentication/ViewModel/AuthViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "registerUser(withEmail:password:fullname:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "AB2ACB6A-3FDE-4973-B84E-9AA63FF1483F - 44620bcaeffabc2b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;__C.FIRAuthDataResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in QuickRide.AuthViewModel.registerUser(withEmail: Swift.String, password: Swift.String, fullname: Swift.String) -&gt; ()"
+                  moduleName = "QuickRide"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/saipalutla/Documents/GVSU/Summer2023/CIS%20693/QuickRide/QuickRide/Core/Authentication/ViewModel/AuthViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "57"
+                  endingLineNumber = "57"
+                  offsetFromSymbolStart = "2219">
+               </Location>
+               <Location
+                  uuid = "AB2ACB6A-3FDE-4973-B84E-9AA63FF1483F - 44620bcaeffabc0a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;__C.FIRAuthDataResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in QuickRide.AuthViewModel.registerUser(withEmail: Swift.String, password: Swift.String, fullname: Swift.String) -&gt; ()"
+                  moduleName = "QuickRide"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/saipalutla/Documents/GVSU/Summer2023/CIS%20693/QuickRide/QuickRide/Core/Authentication/ViewModel/AuthViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "2219">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

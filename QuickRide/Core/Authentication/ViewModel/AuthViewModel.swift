@@ -14,7 +14,8 @@ class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
     
-//    private let service = UserService.shared
+    
+    private let service = UserService.shared
     private var cancellables = Set<AnyCancellable>()
     
     init() {
@@ -50,7 +51,7 @@ class AuthViewModel: ObservableObject {
                 fullname: fullname,
                 email: email,
                 uid: firebaseUser.uid,
-//                coordinates: GeoPoint(latitude: location.latitude, longitude: location.longitude),
+                coordinates: GeoPoint(latitude: location.latitude, longitude: location.longitude),
                 accountType: .driver
             )
 
@@ -70,15 +71,10 @@ class AuthViewModel: ObservableObject {
     }
     
     func fetchUser() {
-        
-        guard let uid = self.userSession?.uid else { return }
-        Firestore.firestore().collection("users").document(uid).getDocument { snapshot, _ in
-            guard let data = snapshot?.data() else { return }
-            
-            guard let user = try? snapshot?.data(as: User.self) else { return }
-            self.currentUser = user
-            print("DEBUG: user is \(user)")
-            
-        }
+        service.$user
+            .sink { user in
+                self.currentUser = user
+            }
+            .store(in: &cancellables)
     }
 }

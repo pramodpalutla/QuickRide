@@ -19,14 +19,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct QuickRideApp: App {
-    @StateObject var locationViewModel = LocationSearchViewModel()
+//    @StateObject var locationViewModel = LocationSearchViewModel()
     @StateObject var authViewModel = AuthViewModel()
+    @StateObject var homeViewModel = HomeViewModel()
+    
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
         WindowGroup {
             HomeView()
-                .environmentObject(locationViewModel)
+//                .environmentObject(locationViewModel)
                 .environmentObject(authViewModel)
+                .environmentObject(homeViewModel)
         }
     }
 }

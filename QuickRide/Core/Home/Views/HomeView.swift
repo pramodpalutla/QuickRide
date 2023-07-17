@@ -11,8 +11,9 @@ struct HomeView: View {
     
     @State private var mapState = MapViewState.noInput
     @State private var showSideMenu = false
-    @EnvironmentObject var locationViewModel: LocationSearchViewModel
+//    @EnvironmentObject var locationViewModel: LocationSearchViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject var homeViewModel: HomeViewModel
     
     var body: some View {
         Group {
@@ -77,10 +78,10 @@ extension HomeView {
         .onReceive(LocationManager.shared.$userLocation) { location in
             print("DEBUG: User location in home view is \(location)")
             if let location = location {
-                locationViewModel.userLocation = location
+                homeViewModel.userLocation = location
             }
         }
-        .onReceive(locationViewModel.$selectedRideLocation) { location in
+        .onReceive(homeViewModel.$selectedRideLocation) { location in
             if location != nil {
                 self.mapState = .locationSelected
             }

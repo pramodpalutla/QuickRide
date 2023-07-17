@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SavedLocationSearchView: View {
     @State private var text = ""
-    @StateObject var viewModel = LocationSearchViewModel()
+    @StateObject var viewModel = HomeViewModel()
     let config: SavedLocationViewModel
     
     var body: some View {
@@ -22,7 +22,8 @@ struct SavedLocationSearchView: View {
             
             Spacer()
             
-            LocationSearchResultsView(viewModel: viewModel, config: .saveLocation(config))
+            LocationSearchResultsView(viewModel: viewModel,
+                                      config: .saveLocation(config))
         }
         .navigationTitle("Add \(config.title)")
         .navigationBarTitleDisplayMode(.inline)

@@ -13,7 +13,7 @@ struct User: Codable {
     let fullname: String
     let email: String
     let uid: String
-//    var coordinates: GeoPoint
+    var coordinates: GeoPoint
     var accountType: AccountType
     var homeLocation: SavedLocation?
     var workLocation: SavedLocation?
