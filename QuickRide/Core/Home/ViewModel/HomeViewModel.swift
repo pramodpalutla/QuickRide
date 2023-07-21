@@ -16,6 +16,7 @@ class HomeViewModel: NSObject, ObservableObject {
     // MARK: - Properties
     
     @Published var drivers = [User]()
+    @Published var trip: Trip?
     private let service = UserService.shared
     private var currentUser: User?
     private var cancellables = Set<AnyCancellable>()
@@ -47,25 +48,18 @@ class HomeViewModel: NSObject, ObservableObject {
     
     // MARK: - Fetching User
     
-   func fetchDrivers() {
-       Firestore.firestore().collection("users")
-           .whereField("accountType", isEqualTo: AccountType.driver.rawValue)
-           .getDocuments { snapshot, _ in
-               guard let documents = snapshot?.documents else { return }
-               let drivers =  documents.compactMap({ try? $0.data(as: User.self)})
-               self.drivers = drivers
-               
-           }
-       
-    }
-    
     func fetchUser() {
         service.$user
             .sink { user in
                 self.currentUser = user
                 guard let user = user else { return }
-                guard user.accountType == .passenger else { return }
-                self.fetchDrivers()
+                
+                if user.accountType == .passenger {
+                    self.fetchDrivers()
+                } else {
+                    self.fetchTrips()
+                }
+                
             }
             .store(in: &cancellables)
     }
@@ -74,6 +68,19 @@ class HomeViewModel: NSObject, ObservableObject {
 // MARK: - Passenger API
 
 extension HomeViewModel {
+    
+    func fetchDrivers() {
+        Firestore.firestore().collection("users")
+            .whereField("accountType", isEqualTo: AccountType.driver.rawValue)
+            .getDocuments { snapshot, _ in
+                guard let documents = snapshot?.documents else { return }
+                let drivers =  documents.compactMap({ try? $0.data(as: User.self)})
+                self.drivers = drivers
+                
+            }
+
+     }
+    
     func requestTrip() {
         guard let driver = drivers.first else { return }
         guard let currentUser = currentUser else { return }
@@ -113,7 +120,17 @@ extension HomeViewModel {
 // MARK: - Driver API
 
 extension HomeViewModel {
-    
+    func fetchTrips() {
+        guard let currentUser = currentUser else { return }
+        Firestore.firestore().collection("trips").whereField("driverUid", isEqualTo: currentUser.uid)
+            .getDocuments { snapshot, _ in
+                guard let documents = snapshot?.documents, let document = documents.first else { return }
+                guard let trip = try? document.data(as: Trip.self) else { return }
+                
+                print("DEBUG: Trip request for driver is \(trip)")
+                
+            }
+    }
 }
 
 // MARK: - LocationSearchHelpers

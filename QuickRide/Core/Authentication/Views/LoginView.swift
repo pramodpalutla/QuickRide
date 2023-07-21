@@ -39,62 +39,62 @@ struct LoginView: View {
                                          placeholder: "Enter your password",
                                          isSecureField: true)
                         
-                        Button {
-                            
-                        } label: {
-                            Text("Forgot Password?")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(.white)
-                                .padding(.top)
-                                
-                        }
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+//                        Button {
+//                            
+//                        } label: {
+//                            Text("Forgot Password?")
+//                                .font(.system(size: 13, weight: .semibold))
+//                                .foregroundColor(.white)
+//                                .padding(.top)
+//                                
+//                        }
+//                        .frame(maxWidth: .infinity, alignment: .trailing)
                         
                     }
                     .padding(.horizontal)
                     .padding(.top, 12)
                     
                     // social sign in view
-                    VStack {
-                        // dividers + text
-                        HStack(spacing: 24) {
-                            Rectangle()
-                                .frame(width: 76, height: 1)
-                                .foregroundColor(.white)
-                                .opacity(0.5)
-                            
-                            Text("Sign in with social")
-                                .foregroundColor(.white)
-                                .fontWeight(.semibold)
-                            
-                            Rectangle()
-                                .frame(width: 76, height: 1)
-                                .foregroundColor(.white)
-                                .opacity(0.5)
-
-                        }
+//                    VStack {
+//                        // dividers + text
+//                        HStack(spacing: 24) {
+//                            Rectangle()
+//                                .frame(width: 76, height: 1)
+//                                .foregroundColor(.white)
+//                                .opacity(0.5)
+//
+//                            Text("Sign in with social")
+//                                .foregroundColor(.white)
+//                                .fontWeight(.semibold)
+//
+//                            Rectangle()
+//                                .frame(width: 76, height: 1)
+//                                .foregroundColor(.white)
+//                                .opacity(0.5)
+//
+//                        }
                         
                         // sign up buttons
-                        HStack(spacing: 24) {
-                            Button {
-                                
-                            } label: {
-                                Image("facebook-sign-in-icon")
-                                    .resizable()
-                                    .frame(width: 44, height: 44)
-                            }
-
-                            
-                            Button {
-                                
-                            } label: {
-                                Image("google-sign-in-icon")
-                                    .resizable()
-                                    .frame(width: 44, height: 44)
-                            }
-                        }
-                    }
-                    .padding(.vertical)
+//                        HStack(spacing: 24) {
+//                            Button {
+//
+//                            } label: {
+//                                Image("facebook-sign-in-icon")
+//                                    .resizable()
+//                                    .frame(width: 44, height: 44)
+//                            }
+//
+//
+//                            Button {
+//
+//                            } label: {
+//                                Image("google-sign-in-icon")
+//                                    .resizable()
+//                                    .frame(width: 44, height: 44)
+//                            }
+//                        }
+//                    }
+//                    .padding(.vertical)
                     
                     Spacer()
                     
