@@ -91,6 +91,7 @@ extension HomeViewModel {
         
         getPlacemark(forLocation: userLocation) { placemark, error in
             guard let placemark = placemark else { return }
+            let tripCost = self.computeRidePrice(forType: .standard)
             
             let trip = Trip(id: NSUUID().uuidString,
                             passengerUid: currentUser.uid,
@@ -101,10 +102,12 @@ extension HomeViewModel {
                             driverLocation: driver.coordinates,
                             pickupLocationName: placemark.name ?? "Current Location",
                             dropoffLocationName: dropoffLocation.title,
-                            pickupLocationAddress: "1 Campus Dr Allendale",
+                            pickupLocationAddress: self.addressFromPlacemark(placemark),
                             pickupLocation: currentUser.coordinates,
                             dropoffLocation: dropoffGeopoint,
-                            tripCost: 50.0
+                            tripCost: tripCost,
+                            distanceToPassenger: 0,
+                            travelTimeToPassenger: 0
             )
             
             guard let encodedTrip = try? Firestore.Encoder().encode(trip) else { return }
@@ -127,8 +130,14 @@ extension HomeViewModel {
                 guard let documents = snapshot?.documents, let document = documents.first else { return }
                 guard let trip = try? document.data(as: Trip.self) else { return }
                 
-                print("DEBUG: Trip request for driver is \(trip)")
+                self.trip = trip
                 
+                self.getDestinationRoute(from: trip.driverLocation.toCoordinate(),
+                                         to: trip.pickupLocation.toCoordinate()) { route in
+                    
+                    self.trip?.travelTimeToPassenger = Int(route.expectedTravelTime / 60)
+                    self.trip?.distanceToPassenger = route.distance
+                }
             }
     }
 }
@@ -136,6 +145,24 @@ extension HomeViewModel {
 // MARK: - LocationSearchHelpers
 
 extension HomeViewModel {
+    
+    func addressFromPlacemark(_ placemark: CLPlacemark) -> String {
+        var result = ""
+        
+        if let thoroughFare = placemark.thoroughfare {
+            result += thoroughFare
+        }
+        
+        if let subthoroughFare = placemark.subThoroughfare {
+            result += " \(subthoroughFare)"
+        }
+        
+        if let subadminarea = placemark.subAdministrativeArea {
+          result += ", \(subadminarea)"
+        }
+        
+        return result
+    }
     
     func getPlacemark(forLocation location: CLLocation, completion: @escaping(CLPlacemark?, Error?) -> Void) {
         CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
